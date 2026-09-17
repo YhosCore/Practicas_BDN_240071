@@ -1,10 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `db_test` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `db_test`;
--- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
 --
 -- Host: localhost    Database: db_test
 -- ------------------------------------------------------
--- Server version	8.0.36
+-- Server version	8.0.44
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,6 +14,12 @@ USE `db_test`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+-- ------------------------------------------------------
+-- SELECCIÓN DE BASE DE DATOS
+-- ------------------------------------------------------
+CREATE DATABASE IF NOT EXISTS `db_test`;
+USE `db_test`;
 
 --
 -- Table structure for table `tb_logs`
@@ -33,7 +37,7 @@ CREATE TABLE `tb_logs` (
   `operation_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `operation_status` bit(1) DEFAULT b'1',
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +46,15 @@ CREATE TABLE `tb_logs` (
 
 LOCK TABLES `tb_logs` WRITE;
 /*!40000 ALTER TABLE `tb_logs` DISABLE KEYS */;
+INSERT INTO `tb_logs` VALUES 
+(1,'tb_users','Create','root@localhost','Usuario creado. ID=1, email=carlos.ramirez@ejemplo.com, nickname=Carlos','2026-09-10 11:05:11',_binary ''),
+(2,'tb_users','Create','root@localhost','Usuario creado. ID=2, email=ana.valdez@ejemplo.com, nickname=Ana','2026-09-10 11:09:37',_binary ''),
+(3,'tb_users','Create','root@localhost','Usuario creado. ID=3, email=miguel.angel@ejemplo.com, nickname=Miguel','2026-09-10 11:09:37',_binary ''),
+(4,'tb_users','Create','root@localhost','Usuario creado. ID=4, email=sofia.torres@ejemplo.com, nickname=Sofia','2026-09-10 11:09:37',_binary ''),
+(5,'tb_users','Create','root@localhost','Usuario creado. ID=5, email=diego.luna@ejemplo.com, nickname=Diego','2026-09-10 11:09:37',_binary ''),
+(6,'tb_users','Create','root@localhost','Usuario creado. ID=6, email=laura.gomez@ejemplo.com, nickname=Laura','2026-09-10 11:09:37',_binary ''),
+(7,'tb_users','Create','admin.sistema@192.168.1.173','Usuario creado. ID=7, email=pedro.perez@ejemplo.com, nickname=Pedro','2026-09-10 11:45:41',_binary ''),
+(8,'tb_users','Delete','admin.sistema@192.168.1.173','Usuario eliminado. ID=3, email=miguel.angel@ejemplo.com, nickname=Miguel','2026-09-10 11:48:05',_binary '');
 /*!40000 ALTER TABLE `tb_logs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,11 +71,12 @@ CREATE TABLE `tb_users` (
   `nickname` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `creation_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `last_login` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `nickname` (`nickname`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,8 +85,102 @@ CREATE TABLE `tb_users` (
 
 LOCK TABLES `tb_users` WRITE;
 /*!40000 ALTER TABLE `tb_users` DISABLE KEYS */;
+INSERT INTO `tb_users` VALUES 
+(1,'carlos.ramirez@ejemplo.com','Carlos','8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92','2026-09-10 11:05:11','2026-09-10 11:05:11',NULL),
+(2,'ana.valdez@ejemplo.com','Ana','8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92','2026-09-10 11:09:37','2026-09-10 11:09:37',NULL),
+(4,'sofia.torres@ejemplo.com','Sofia','8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92','2026-09-10 11:09:37','2026-09-10 11:09:37',NULL),
+(5,'diego.luna@ejemplo.com','Diego','8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92','2026-09-10 11:09:37','2026-09-10 11:09:37',NULL),
+(6,'laura.gomez@ejemplo.com','Laura','8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92','2026-09-10 11:09:37','2026-09-10 11:09:37',NULL),
+(7,'pedro.perez@ejemplo.com','Pedro','8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92','2026-09-10 11:45:41','2026-09-10 11:45:41',NULL);
 /*!40000 ALTER TABLE `tb_users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = cp850 */ ;
+/*!50003 SET character_set_results = cp850 */ ;
+/*!50003 SET collation_connection  = cp850_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_after_insert_tb_users` AFTER INSERT ON `tb_users` FOR EACH ROW BEGIN
+    INSERT INTO `tb_logs` (
+        `table_name`,
+        `operation`,
+        `db_users`,
+        `description`
+    ) 
+    VALUES (
+        'tb_users',
+        'Create',
+        USER(),
+        CONCAT('Usuario creado. ID=', NEW.ID, ', email=', NEW.email, ', nickname=', NEW.nickname)
+    );
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = cp850 */ ;
+/*!50003 SET character_set_results = cp850 */ ;
+/*!50003 SET collation_connection  = cp850_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_after_update_tb_users` AFTER UPDATE ON `tb_users` FOR EACH ROW BEGIN
+    INSERT INTO `tb_logs` (
+        `table_name`,
+        `operation`,
+        `db_users`,
+        `description`
+    ) 
+    VALUES (
+        'tb_users',
+        'Update',
+        USER(),
+        CONCAT('Usuario actualizado. ID=', NEW.ID, ', email=', NEW.email, ', nickname=', NEW.nickname)
+    );
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = cp850 */ ;
+/*!50003 SET character_set_results = cp850 */ ;
+/*!50003 SET collation_connection  = cp850_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_after_delete_tb_users` AFTER DELETE ON `tb_users` FOR EACH ROW BEGIN
+    INSERT INTO `tb_logs` (
+        `table_name`,
+        `operation`,
+        `db_users`,
+        `description`
+    ) 
+    VALUES (
+        'tb_users',
+        'Delete',
+        USER(),
+        CONCAT('Usuario eliminado. ID=', OLD.ID, ', email=', OLD.email, ', nickname=', OLD.nickname)
+    );
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Dumping events for database 'db_test'
@@ -91,4 +199,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-09 18:25:19
+-- Dump completed on 2026-09-14 21:29:29
