@@ -9,7 +9,7 @@ DROP USER IF EXISTS 'yhostin.rmz'@'%';
 DROP USER IF EXISTS 'uriel.gonzalez.izquierda'@'%';
 DROP USER IF EXISTS 'carlos.alberto'@'%';
 
-DROP ROLE IF EXISTS 'superadmin', 'admin', 'seller', 'buyer', 'support', 'common', 'user_not_registered';
+DROP ROLE IF EXISTS 'superadmin', 'admin', 'seller', 'buyer', 'support', 'user_not_registered';
 FLUSH PRIVILEGES;
 
 /* ========================================================= */
@@ -30,18 +30,17 @@ GRANT ALL PRIVILEGES ON *.* TO 'yhostin.rmz'@'%' WITH GRANT OPTION;
 GRANT SELECT, INSERT, UPDATE, DELETE ON db_test.* TO 'marco.ramirez'@'%';
 
 /* ========================================================= */
-/* 3. CREACIÓN DE LOS 7 ROLES                                */
+/* 3. CREACIÓN DE LOS ROLES                                  */
 /* ========================================================= */
 CREATE ROLE 'superadmin';
 CREATE ROLE 'admin';
 CREATE ROLE 'seller';
 CREATE ROLE 'buyer';
 CREATE ROLE 'support';
-CREATE ROLE 'common';
 CREATE ROLE 'user_not_registered';
 
 /* ========================================================= */
-/* 4. ASIGNACIÓN DE PRIVILEGIOS A LOS 7 ROLES (SIN DELETE)   */
+/* 4. ASIGNACIÓN DE PRIVILEGIOS A LOS ROLES                  */
 /* ========================================================= */
 -- SUPERADMIN Y ADMIN
 GRANT ALL PRIVILEGES ON *.* TO 'superadmin';
@@ -57,14 +56,11 @@ GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'seller';
 -- BUYER (Para compradores)
 GRANT SELECT ON db_test.tb_products TO 'buyer';
 
--- COMMON (Para usuarios estándar / comunes)
-GRANT SELECT ON db_test.tb_products TO 'common';
-
--- USER_NOT_REGISTERED (Para visitantes)
-GRANT SELECT ON db_test.tb_products TO 'user_not_registered';
+-- USER_NOT_REGISTERED (Actualizado con SELECT, INSERT, UPDATE)
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'user_not_registered';
 
 /* ========================================================= */
-/* 5. ASIGNAR LOS ROLES A LOS 7 USUARIOS                     */
+/* 5. ASIGNAR LOS ROLES A LOS USUARIOS                       */
 /* ========================================================= */
 GRANT 'superadmin' TO 'yhostin.rmz'@'%';
 GRANT 'admin' TO 'marco.ramirez'@'%';
@@ -77,8 +73,8 @@ GRANT 'seller' TO 'uriel.gonzalez.izquierda'@'%';
 -- Comprador
 GRANT 'buyer' TO 'olaf.garcia.izquierda'@'%';
 
--- Usuario común
-GRANT 'common' TO 'carlos.alberto'@'%';
+-- Usuario no registrado (Asignado a Carlos Alberto)
+GRANT 'user_not_registered' TO 'carlos.alberto'@'%';
 
 /* ========================================================= */
 /* 6. ACTIVAR ROLES AUTOMÁTICAMENTE AL INICIAR SESIÓN        */
@@ -89,7 +85,7 @@ SET DEFAULT ROLE 'support' TO 'cris.escamilla.derecha'@'%';
 SET DEFAULT ROLE 'seller' TO 'lalo.amaro'@'%';
 SET DEFAULT ROLE 'seller' TO 'uriel.gonzalez.izquierda'@'%';
 SET DEFAULT ROLE 'buyer' TO 'olaf.garcia.izquierda'@'%';
-SET DEFAULT ROLE 'common' TO 'carlos.alberto'@'%';
+SET DEFAULT ROLE 'user_not_registered' TO 'carlos.alberto'@'%';
 
 /* ========================================================= */
 /* 7. ASIGNACIÓN DE PRIVILEGIOS DIRECTOS ADICIONALES         */
