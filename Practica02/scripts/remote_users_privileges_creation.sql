@@ -1,12 +1,12 @@
 /* ========================================================= */
 /* 0. LIMPIEZA PREVIA (Elimina usuarios y roles anteriores)  */
 /* ========================================================= */
-DROP USER IF EXISTS 'olaf.garcia.izquierda'@'%';
+DROP USER IF EXISTS 'olaf.garcia'@'%';
 DROP USER IF EXISTS 'marco.ramirez'@'%';
-DROP USER IF EXISTS 'cris.escamilla.derecha'@'%';
+DROP USER IF EXISTS 'cris.escamilla'@'%';
 DROP USER IF EXISTS 'lalo.amaro'@'%';
 DROP USER IF EXISTS 'yhostin.rmz'@'%';
-DROP USER IF EXISTS 'uriel.gonzalez.izquierda'@'%';
+DROP USER IF EXISTS 'uriel.gonzalez'@'%';
 DROP USER IF EXISTS 'carlos.alberto'@'%';
 
 DROP ROLE IF EXISTS 'superadmin', 'admin', 'seller', 'buyer', 'support', 'user_not_registered';
@@ -15,12 +15,12 @@ FLUSH PRIVILEGES;
 /* ========================================================= */
 /* 1. CREACIÓN DE LOS 7 USUARIOS REMOTOS                     */
 /* ========================================================= */
-CREATE USER 'olaf.garcia.izquierda'@'%' IDENTIFIED BY '240508';
+CREATE USER 'olaf.garcia'@'%' IDENTIFIED BY '240508';
 CREATE USER 'marco.ramirez'@'%' IDENTIFIED BY 'qwerty123';
-CREATE USER 'cris.escamilla.derecha'@'%' IDENTIFIED BY '240687';
+CREATE USER 'cris.escamilla'@'%' IDENTIFIED BY '240687';
 CREATE USER 'lalo.amaro'@'%' IDENTIFIED BY '240726';
 CREATE USER 'yhostin.rmz'@'%' IDENTIFIED BY '240071';
-CREATE USER 'uriel.gonzalez.izquierda'@'%' IDENTIFIED BY '240463';
+CREATE USER 'uriel.gonzalez'@'%' IDENTIFIED BY '240463';
 CREATE USER 'carlos.alberto'@'%' IDENTIFIED BY '240201';
 
 /* ========================================================= */
@@ -64,14 +64,14 @@ GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'user_not_registered';
 /* ========================================================= */
 GRANT 'superadmin' TO 'yhostin.rmz'@'%';
 GRANT 'admin' TO 'marco.ramirez'@'%';
-GRANT 'support' TO 'cris.escamilla.derecha'@'%';
+GRANT 'support' TO 'cris.escamilla'@'%';
 
--- Los 2 vendedores
+-- Vendedores: Lalo y Olaf
 GRANT 'seller' TO 'lalo.amaro'@'%';
-GRANT 'seller' TO 'uriel.gonzalez.izquierda'@'%';
+GRANT 'seller' TO 'olaf.garcia'@'%';
 
--- Comprador
-GRANT 'buyer' TO 'olaf.garcia.izquierda'@'%';
+-- Compradores: Uriel y Olaf ya no, ahora Uriel es buyer
+GRANT 'buyer' TO 'uriel.gonzalez'@'%';
 
 -- Usuario no registrado (Asignado a Carlos Alberto)
 GRANT 'user_not_registered' TO 'carlos.alberto'@'%';
@@ -81,10 +81,10 @@ GRANT 'user_not_registered' TO 'carlos.alberto'@'%';
 /* ========================================================= */
 SET DEFAULT ROLE 'superadmin' TO 'yhostin.rmz'@'%';
 SET DEFAULT ROLE 'admin' TO 'marco.ramirez'@'%';
-SET DEFAULT ROLE 'support' TO 'cris.escamilla.derecha'@'%';
+SET DEFAULT ROLE 'support' TO 'cris.escamilla'@'%';
 SET DEFAULT ROLE 'seller' TO 'lalo.amaro'@'%';
-SET DEFAULT ROLE 'seller' TO 'uriel.gonzalez.izquierda'@'%';
-SET DEFAULT ROLE 'buyer' TO 'olaf.garcia.izquierda'@'%';
+SET DEFAULT ROLE 'seller' TO 'olaf.garcia'@'%';
+SET DEFAULT ROLE 'buyer' TO 'uriel.gonzalez'@'%';
 SET DEFAULT ROLE 'user_not_registered' TO 'carlos.alberto'@'%';
 
 /* ========================================================= */
