@@ -9,3 +9,4 @@ Periodo: Septiembre - Diciembre 2026
 |---|---|---|---|---|
 |1.|Practica 02|Conexion Remota en MySQL|42| En desarrollo|
 |2.|Conexiones  Remotas para Bases de datos SQL|Crear y admnistrar usuarios y privilegios para conexiones desde internet o redes locales|50|Terminada|
+=======
