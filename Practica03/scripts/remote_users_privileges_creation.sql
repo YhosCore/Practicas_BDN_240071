@@ -1,0 +1,102 @@
+/* ========================================================= */
+/* 0. LIMPIEZA PREVIA (Elimina usuarios y roles anteriores)  */
+/* ========================================================= */
+DROP USER IF EXISTS 'olaf.garcia'@'%';
+DROP USER IF EXISTS 'marco.ramirez'@'%';
+DROP USER IF EXISTS 'cris.escamilla'@'%';
+DROP USER IF EXISTS 'lalo.amaro'@'%';
+DROP USER IF EXISTS 'yhostin.rmz'@'%';
+DROP USER IF EXISTS 'uriel.gonzalez'@'%';
+DROP USER IF EXISTS 'carlos.alberto'@'%';
+
+DROP ROLE IF EXISTS 'superadmin', 'admin', 'seller', 'buyer', 'support', 'user_not_registered';
+FLUSH PRIVILEGES;
+
+/* ========================================================= */
+/* 1. CREACIÓN DE LOS 7 USUARIOS REMOTOS                     */
+/* ========================================================= */
+CREATE USER 'olaf.garcia'@'%' IDENTIFIED BY '240508';
+CREATE USER 'marco.ramirez'@'%' IDENTIFIED BY 'qwerty123';
+CREATE USER 'cris.escamilla'@'%' IDENTIFIED BY '240687';
+CREATE USER 'lalo.amaro'@'%' IDENTIFIED BY '240726';
+CREATE USER 'yhostin.rmz'@'%' IDENTIFIED BY '240071';
+CREATE USER 'uriel.gonzalez'@'%' IDENTIFIED BY '240463';
+CREATE USER 'carlos.alberto'@'%' IDENTIFIED BY '240201';
+
+/* ========================================================= */
+/* 2. ASIGNACIÓN DE PRIVILEGIOS DIRECTOS                     */
+/* ========================================================= */
+GRANT ALL PRIVILEGES ON *.* TO 'yhostin.rmz'@'%' WITH GRANT OPTION;
+GRANT SELECT, INSERT, UPDATE, DELETE ON db_test.* TO 'marco.ramirez'@'%';
+
+/* ========================================================= */
+/* 3. CREACIÓN DE LOS ROLES                                  */
+/* ========================================================= */
+CREATE ROLE 'superadmin';
+CREATE ROLE 'admin';
+CREATE ROLE 'seller';
+CREATE ROLE 'buyer';
+CREATE ROLE 'support';
+CREATE ROLE 'user_not_registered';
+
+/* ========================================================= */
+/* 4. ASIGNACIÓN DE PRIVILEGIOS A LOS ROLES                  */
+/* ========================================================= */
+-- SUPERADMIN Y ADMIN
+GRANT ALL PRIVILEGES ON *.* TO 'superadmin';
+GRANT ALL PRIVILEGES ON db_test.* TO 'admin';
+
+-- SUPPORT 
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_users TO 'support';
+GRANT SELECT, UPDATE ON db_test.tb_products TO 'support';
+GRANT SELECT on  db_test.tbd_products_categories TO 'support';
+
+-- SELLER (Sin permiso de borrar)
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'seller';
+GRANT SELECT ON db_test.tbc_categorias TO 'seller';
+
+-- BUYER (Para compradores)
+GRANT SELECT ON db_test.tb_products TO 'buyer';
+
+-- USER_NOT_REGISTERED (Actualizado con SELECT, INSERT, UPDATE)
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'user_not_registered';
+
+/* ========================================================= */
+/* 5. ASIGNAR LOS ROLES A LOS USUARIOS                       */
+/* ========================================================= */
+GRANT 'superadmin' TO 'yhostin.rmz'@'%';
+GRANT 'admin' TO 'marco.ramirez'@'%';
+GRANT 'support' TO 'cris.escamilla'@'%';
+
+-- Vendedores: Lalo y Olaf
+GRANT 'seller' TO 'lalo.amaro'@'%';
+GRANT 'seller' TO 'olaf.garcia'@'%';
+
+-- Compradores: Uriel y Olaf ya no, ahora Uriel es buyer
+GRANT 'buyer' TO 'uriel.gonzalez'@'%';
+
+-- Usuario no registrado (Asignado a Carlos Alberto)
+GRANT 'user_not_registered' TO 'carlos.alberto'@'%';
+
+/* ========================================================= */
+/* 6. ACTIVAR ROLES AUTOMÁTICAMENTE AL INICIAR SESIÓN        */
+/* ========================================================= */
+SET DEFAULT ROLE 'superadmin' TO 'yhostin.rmz'@'%';
+SET DEFAULT ROLE 'admin' TO 'marco.ramirez'@'%';
+SET DEFAULT ROLE 'support' TO 'cris.escamilla'@'%';
+SET DEFAULT ROLE 'seller' TO 'lalo.amaro'@'%';
+SET DEFAULT ROLE 'seller' TO 'olaf.garcia'@'%';
+SET DEFAULT ROLE 'buyer' TO 'uriel.gonzalez'@'%';
+SET DEFAULT ROLE 'user_not_registered' TO 'carlos.alberto'@'%';
+
+/* ========================================================= */
+/* 7. ASIGNACIÓN DE PRIVILEGIOS DIRECTOS ADICIONALES         */
+/* ========================================================= */
+GRANT SELECT, INSERT, UPDATE, DELETE ON db_test.* TO 'yhostin.rmz'@'%';
+
+FLUSH PRIVILEGES;
+
+/* ========================================================= */
+/* 8. MENSAJE DE CONFIRMACIÓN                                */
+/* ========================================================= */
+SELECT '¡Usuarios, roles y privilegios creados correctamente!' AS Mensaje;
