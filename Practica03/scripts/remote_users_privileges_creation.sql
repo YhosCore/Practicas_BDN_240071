@@ -50,6 +50,7 @@ GRANT ALL PRIVILEGES ON db_test.* TO 'admin';
 GRANT SELECT, INSERT, UPDATE ON db_test.tb_users TO 'support';
 GRANT SELECT, UPDATE ON db_test.tb_products TO 'support';
 GRANT SELECT on  db_test.tbd_products_categories TO 'support';
+GRANT execute on procedure  db_test.sp_soft_delete_user TO 'support'@'%';
 
 -- SELLER (Sin permiso de borrar)
 GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'seller';
