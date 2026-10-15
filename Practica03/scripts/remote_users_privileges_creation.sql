@@ -57,7 +57,10 @@ GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'seller';
 GRANT SELECT ON db_test.tbc_categorias TO 'seller';
 
 -- BUYER (Para compradores)
-GRANT SELECT ON db_test.tb_products TO 'buyer';
+GRANT SELECT,insert , UPDATE ON db_test.tb_carts TO 'buyer';
+GRANT SELECT,insert , UPDATE ON db_test.tb_cart_items TO 'buyer';
+GRANT SELECT,insert ON db_test.tb_buyer_orders TO 'buyer';
+GRANT SELECT,insert, UPDATE ON db_test.tbd_users_whishlist_products TO 'buyer';
 
 -- USER_NOT_REGISTERED (Actualizado con SELECT, INSERT, UPDATE)
 GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'user_not_registered';
