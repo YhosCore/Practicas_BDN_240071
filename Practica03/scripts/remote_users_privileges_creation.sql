@@ -1,106 +1,162 @@
-/* ========================================================= */
-/* 0. LIMPIEZA PREVIA (Elimina usuarios y roles anteriores)  */
-/* ========================================================= */
-DROP USER IF EXISTS 'olaf.garcia'@'%';
-DROP USER IF EXISTS 'marco.ramirez'@'%';
-DROP USER IF EXISTS 'cris.escamilla'@'%';
-DROP USER IF EXISTS 'lalo.amaro'@'%';
-DROP USER IF EXISTS 'yhostin.rmz'@'%';
-DROP USER IF EXISTS 'uriel.gonzalez'@'%';
-DROP USER IF EXISTS 'carlos.alberto'@'%';
 
-DROP ROLE IF EXISTS 'superadmin', 'admin', 'seller', 'buyer', 'support', 'user_not_registered';
-FLUSH PRIVILEGES;
+/* ==============================================================================
+   1. CREACIÓN DE LOS 9 USUARIOS REMOTOS
+   ============================================================================== */
 
-/* ========================================================= */
-/* 1. CREACIÓN DE LOS 7 USUARIOS REMOTOS                     */
-/* ========================================================= */
-CREATE USER 'olaf.garcia'@'%' IDENTIFIED BY '240508';
-CREATE USER 'marco.ramirez'@'%' IDENTIFIED BY 'qwerty123';
-CREATE USER 'cris.escamilla'@'%' IDENTIFIED BY '240687';
-CREATE USER 'lalo.amaro'@'%' IDENTIFIED BY '240726';
-CREATE USER 'yhostin.rmz'@'%' IDENTIFIED BY '240071';
-CREATE USER 'uriel.gonzalez'@'%' IDENTIFIED BY '240463';
-CREATE USER 'carlos.alberto'@'%' IDENTIFIED BY '240201';
+CREATE USER IF NOT EXISTS 'olaf.garcia'@'%' IDENTIFIED BY '240508';
+CREATE USER IF NOT EXISTS 'marco.ramirez'@'%' IDENTIFIED BY 'qwerty123';
+CREATE USER IF NOT EXISTS 'cris.escamilla'@'%' IDENTIFIED BY '240687';
+CREATE USER IF NOT EXISTS 'lalo.amaro'@'%' IDENTIFIED BY '240726';
+CREATE USER IF NOT EXISTS 'yhostin.rmz'@'%' IDENTIFIED BY '240071';
+CREATE USER IF NOT EXISTS 'carlos.alberto'@'%' IDENTIFIED BY '240201';
+CREATE USER IF NOT EXISTS 'app_web'@'%' IDENTIFIED BY 'Web123';
+CREATE USER IF NOT EXISTS 'app_movil'@'%' IDENTIFIED BY 'Mobile890';
 
-/* ========================================================= */
-/* 2. ASIGNACIÓN DE PRIVILEGIOS DIRECTOS                     */
-/* ========================================================= */
-GRANT ALL PRIVILEGES ON *.* TO 'yhostin.rmz'@'%' WITH GRANT OPTION;
-GRANT SELECT, INSERT, UPDATE, DELETE ON db_test.* TO 'marco.ramirez'@'%';
 
-/* ========================================================= */
-/* 3. CREACIÓN DE LOS ROLES                                  */
-/* ========================================================= */
-CREATE ROLE 'superadmin';
-CREATE ROLE 'admin';
-CREATE ROLE 'seller';
-CREATE ROLE 'buyer';
-CREATE ROLE 'support';
-CREATE ROLE 'user_not_registered';
+/* ==============================================================================
+   2. CREACIÓN DE ROLES
+   ============================================================================== */
 
-/* ========================================================= */
-/* 4. ASIGNACIÓN DE PRIVILEGIOS A LOS ROLES                  */
-/* ========================================================= */
--- SUPERADMIN Y ADMIN
-GRANT ALL PRIVILEGES ON *.* TO 'superadmin';
+CREATE ROLE IF NOT EXISTS 'superadmin';
+CREATE ROLE IF NOT EXISTS 'admin';
+CREATE ROLE IF NOT EXISTS 'seller';
+CREATE ROLE IF NOT EXISTS 'common_user';
+CREATE ROLE IF NOT EXISTS 'support';
+CREATE ROLE IF NOT EXISTS 'user_not_registered';
+
+
+/* ==============================================================================
+   3. PRIVILEGIOS ASIGNADOS A LOS ROLES
+   ============================================================================== */
+
+/* SUPERADMIN: acceso total a todos los esquemas y objetos */
+GRANT ALL PRIVILEGES ON *.* TO 'superadmin' WITH GRANT OPTION;
+
+/* ADMIN: administración completa de db_test */
 GRANT ALL PRIVILEGES ON db_test.* TO 'admin';
 
--- SUPPORT 
+/* SUPPORT: gestión de usuarios y atención de incidencias */
 GRANT SELECT, INSERT, UPDATE ON db_test.tb_users TO 'support';
 GRANT SELECT, UPDATE ON db_test.tb_products TO 'support';
-GRANT SELECT on  db_test.tbd_products_categories TO 'support';
-GRANT execute on procedure  db_test.sp_soft_delete_user TO 'support'@'%';
+GRANT EXECUTE ON PROCEDURE db_test.sp_soft_delete_user TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbc_categories TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbd_products_categories TO 'support';
 
--- SELLER (Sin permiso de borrar)
+GRANT SELECT ON db_test.tb_logs TO 'support';
+GRANT SELECT ON db_test.tb_order_cancellations TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_shipments TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_returns TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_refunds TO 'support';
+GRANT SELECT ON db_test.tb_payments TO 'support';
+GRANT SELECT ON db_test.tb_payment_transaction TO 'support';
+GRANT SELECT ON db_test.tb_payment_methods TO 'support';
+GRANT SELECT ON db_test.tbc_payment_methods_types TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbd_cancellation_items TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbd_return_items TO 'support';
+GRANT SELECT ON db_test.tbd_order_items TO 'support';
+GRANT SELECT ON db_test.tbd_user_payment_methods TO 'support';
+GRANT SELECT ON db_test.tb_user_addresses TO 'support';
+GRANT SELECT ON db_test.tbd_address_components TO 'support';
+GRANT SELECT ON db_test.tbd_products_users_providers TO 'support';
+
+/* SELLER: administración de productos, proveedores y consulta de pedidos */
 GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'seller';
-GRANT SELECT ON db_test.tbc_categorias TO 'seller';
+GRANT SELECT ON db_test.tbc_categories TO 'seller';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbd_products_users_providers TO 'seller';
+GRANT SELECT ON db_test.tbd_order_items TO 'seller';
+GRANT SELECT ON db_test.tb_orders TO 'seller';
+GRANT SELECT ON db_test.tb_shipments TO 'seller';
 
--- BUYER (Para compradores)
-GRANT SELECT,insert , UPDATE ON db_test.tb_carts TO 'buyer';
-GRANT SELECT,insert , UPDATE ON db_test.tb_cart_items TO 'buyer';
-GRANT SELECT,insert ON db_test.tb_buyer_orders TO 'buyer';
-GRANT SELECT,insert, UPDATE ON db_test.tbd_users_whishlist_products TO 'buyer';
+/* BUYER: carrito, pedidos, direcciones y pagos */
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_carts TO 'buyer';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbd_cart_items TO 'buyer';
+GRANT SELECT, INSERT ON db_test.tb_orders TO 'buyer';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbd_users_wishlist_products TO 'buyer';
+GRANT SELECT, INSERT ON db_test.tbd_order_items TO 'buyer';
+GRANT SELECT ON db_test.tb_payment_methods TO 'buyer';
+GRANT SELECT ON db_test.tbc_payment_methods_types TO 'buyer';
+GRANT SELECT, INSERT, UPDATE ON db_test.tb_user_addresses TO 'buyer';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbd_user_payment_methods TO 'buyer';
+GRANT SELECT, INSERT ON db_test.tb_payments TO 'buyer';
+GRANT SELECT ON db_test.tb_payment_transaction TO 'buyer';
+GRANT SELECT ON db_test.tb_shipments TO 'buyer';
+GRANT SELECT, INSERT ON db_test.tb_order_cancellations TO 'buyer';
+GRANT SELECT, INSERT ON db_test.tbd_cancellation_items TO 'buyer';
+GRANT SELECT, INSERT ON db_test.tb_returns TO 'buyer';
+GRANT SELECT, INSERT ON db_test.tbd_return_items TO 'buyer';
+GRANT SELECT ON db_test.tb_refunds TO 'buyer';
 
--- USER_NOT_REGISTERED (Actualizado con SELECT, INSERT, UPDATE)
-GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'user_not_registered';
+/* COMMON_USER: consulta de catálogo */
+GRANT SELECT ON db_test.tb_products TO 'common_user';
+GRANT SELECT ON db_test.tbc_categories TO 'common_user';
+GRANT SELECT ON db_test.tbd_products_categories TO 'common_user';
+GRANT SELECT ON db_test.tb_payment_methods TO 'common_user';
+GRANT SELECT ON db_test.tbc_payment_methods_types TO 'common_user';
 
-/* ========================================================= */
-/* 5. ASIGNAR LOS ROLES A LOS USUARIOS                       */
-/* ========================================================= */
-GRANT 'superadmin' TO 'yhostin.rmz'@'%';
-GRANT 'admin' TO 'marco.ramirez'@'%';
-GRANT 'support' TO 'cris.escamilla'@'%';
+/* USER_NOT_REGISTERED: alta inicial de usuarios */
+GRANT INSERT ON db_test.tb_people TO 'user_not_registered';
+GRANT INSERT ON db_test.tb_users TO 'user_not_registered';
 
--- Vendedores: Lalo y Olaf
-GRANT 'seller' TO 'lalo.amaro'@'%';
+/* PROCEDIMIENTOS para las aplicaciones web y móvil:
+   los permisos EXECUTE se asignan directamente a cada usuario de aplicación. */
+
+
+/* ==============================================================================
+   4. PRIVILEGIOS DIRECTOS ESPECÍFICOS
+   ============================================================================== */
+
+/* Marco conserva permisos de lectura y modificación en toda la base db_test. */
+GRANT SELECT, INSERT, UPDATE, DELETE ON db_test.* TO 'marco.ramirez'@'%';
+
+/* Aplicaciones: solo pueden ejecutar el procedimiento de registro. */
+GRANT EXECUTE ON PROCEDURE db_test.sp_registrar_usuario TO 'app_web'@'%';
+GRANT EXECUTE ON PROCEDURE db_test.sp_registrar_usuario TO 'app_movil'@'%';
+
+
+/* ==============================================================================
+   5. ASIGNACIÓN DE LOS ROLES A LOS 9 USUARIOS
+   ============================================================================== */
+
+/* Olaf: vendedor */
 GRANT 'seller' TO 'olaf.garcia'@'%';
 
--- Compradores: Uriel y Olaf ya no, ahora Uriel es buyer
-GRANT 'buyer' TO 'uriel.gonzalez'@'%';
+/* Marco: administrador */
+GRANT 'admin' TO 'marco.ramirez'@'%';
 
--- Usuario no registrado (Asignado a Carlos Alberto)
-GRANT 'user_not_registered' TO 'carlos.alberto'@'%';
+/* Cristopher: soporte */
+GRANT 'support' TO 'cris.escamilla'@'%';
 
-/* ========================================================= */
-/* 6. ACTIVAR ROLES AUTOMÁTICAMENTE AL INICIAR SESIÓN        */
-/* ========================================================= */
-SET DEFAULT ROLE 'superadmin' TO 'yhostin.rmz'@'%';
+/* Lalo: vendedor */
+GRANT 'seller' TO 'lalo.amaro'@'%';
+
+/* Yhostin: superadministrador */
+GRANT 'superadmin' TO 'yhostin.rmz'@'%';
+
+/* Carlos: usuario no registrado */
+GRANT 'user_not_registered' TO 'app_web'@'%';
+GRANT 'user_not_registered' TO 'app_movil'@'%';
+/* Aplicaciones web y móvil: ejecutan el procedimiento de registro.
+   No se les asigna user_not_registered porque ese rol permite INSERT directo
+   en tablas; las aplicaciones reciben únicamente EXECUTE en el procedimiento. */
+
+
+/* ==============================================================================
+   6. ACTIVACIÓN DE ROLES POR DEFECTO
+   ============================================================================== */
+SET DEFAULT ROLE 'seller' TO 'olaf.garcia'@'%';
 SET DEFAULT ROLE 'admin' TO 'marco.ramirez'@'%';
 SET DEFAULT ROLE 'support' TO 'cris.escamilla'@'%';
 SET DEFAULT ROLE 'seller' TO 'lalo.amaro'@'%';
-SET DEFAULT ROLE 'seller' TO 'olaf.garcia'@'%';
+SET DEFAULT ROLE 'superadmin' TO 'yhostin.rmz'@'%';
 SET DEFAULT ROLE 'buyer' TO 'uriel.gonzalez'@'%';
 SET DEFAULT ROLE 'user_not_registered' TO 'carlos.alberto'@'%';
 
-/* ========================================================= */
-/* 7. ASIGNACIÓN DE PRIVILEGIOS DIRECTOS ADICIONALES         */
-/* ========================================================= */
-GRANT SELECT, INSERT, UPDATE, DELETE ON db_test.* TO 'yhostin.rmz'@'%';
+
+/* ==============================================================================
+   7. VERIFICACIÓN
+   ============================================================================== */
 
 FLUSH PRIVILEGES;
 
-/* ========================================================= */
-/* 8. MENSAJE DE CONFIRMACIÓN                                */
-/* ========================================================= */
-SELECT '¡Usuarios, roles y privilegios creados correctamente!' AS Mensaje;
+SELECT 'Los 9 usuarios y sus roles/privilegios han sido configurados correctamente'
+AS mensaje;
