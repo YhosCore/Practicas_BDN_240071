@@ -13,7 +13,6 @@
 |:---:|:---:|---|:---:|:---:|
 | 1 | Práctica 01 | Conexiones remotas a bases de datos relacionales | — | Finalizado |
 | 2 | Práctica 02 | Conexiones remotas a bases de datos relacionales | 50 | Finalizado |
-| 3 | Práctica 03 | Manipulación de Datos, Relaciones, Procedimientos,
-Funciones y Eventos en Conexiones Remotas | 100 | Finalizado |
+| 3 | Práctica 03 | Manipulación de Datos, Relaciones, Procedimientos Funciones y Eventos en Conexiones Remotas | 100 | Finalizado |
 
 ---
