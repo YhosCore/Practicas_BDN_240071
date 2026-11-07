@@ -158,5 +158,5 @@ SET DEFAULT ROLE 'user_not_registered' TO 'carlos.alberto'@'%';
 
 FLUSH PRIVILEGES;
 
-SELECT 'Los 9 usuarios y sus roles/privilegios han sido configurados correctamente'
+SELECT 'Los users y sus roles/privilegios han sido configurados correctamente'
 AS mensaje;
