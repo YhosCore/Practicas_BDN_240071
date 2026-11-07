@@ -4,6 +4,8 @@
 
 **Docente:** M.T.I. Marco A. Ramírez Hernández  
 **Periodo:** Septiembre - Diciembre 2026
+**Diccionario:**https://yhoscore.github.io/Index_page/
+
 
 ---
 
