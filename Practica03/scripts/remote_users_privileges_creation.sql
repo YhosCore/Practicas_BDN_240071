@@ -21,6 +21,7 @@ CREATE ROLE IF NOT EXISTS 'superadmin';
 CREATE ROLE IF NOT EXISTS 'admin';
 CREATE ROLE IF NOT EXISTS 'seller';
 CREATE ROLE IF NOT EXISTS 'common_user';
+CREATE ROLE IF NOT EXISTS 'buyer';
 CREATE ROLE IF NOT EXISTS 'support';
 CREATE ROLE IF NOT EXISTS 'user_not_registered';
 
@@ -38,7 +39,7 @@ GRANT ALL PRIVILEGES ON db_test.* TO 'admin';
 /* SUPPORT: gestión de usuarios y atención de incidencias */
 GRANT SELECT, INSERT, UPDATE ON db_test.tb_users TO 'support';
 GRANT SELECT, UPDATE ON db_test.tb_products TO 'support';
-GRANT EXECUTE ON PROCEDURE db_test.sp_soft_delete_user TO 'support';
+-- sp_soft_delete_user no existe en el respaldo 07_11__p03.sql; quitar este permiso hasta crear la rutina.
 GRANT SELECT, INSERT, UPDATE ON db_test.tbc_categories TO 'support';
 GRANT SELECT, INSERT, UPDATE ON db_test.tbd_products_categories TO 'support';
 
@@ -64,13 +65,13 @@ GRANT SELECT, INSERT, UPDATE ON db_test.tb_products TO 'seller';
 GRANT SELECT ON db_test.tbc_categories TO 'seller';
 GRANT SELECT, INSERT, UPDATE ON db_test.tbd_products_users_providers TO 'seller';
 GRANT SELECT ON db_test.tbd_order_items TO 'seller';
-GRANT SELECT ON db_test.tb_orders TO 'seller';
+GRANT SELECT ON db_test.tb_buyer_orders TO 'seller';
 GRANT SELECT ON db_test.tb_shipments TO 'seller';
 
 /* BUYER: carrito, pedidos, direcciones y pagos */
 GRANT SELECT, INSERT, UPDATE ON db_test.tb_carts TO 'buyer';
-GRANT SELECT, INSERT, UPDATE ON db_test.tbd_cart_items TO 'buyer';
-GRANT SELECT, INSERT ON db_test.tb_orders TO 'buyer';
+GRANT SELECT, INSERT, UPDATE ON db_test.tbd_carts_items TO 'buyer';
+GRANT SELECT, INSERT ON db_test.tb_buyer_orders TO 'buyer';
 GRANT SELECT, INSERT, UPDATE ON db_test.tbd_users_wishlist_products TO 'buyer';
 GRANT SELECT, INSERT ON db_test.tbd_order_items TO 'buyer';
 GRANT SELECT ON db_test.tb_payment_methods TO 'buyer';
@@ -86,8 +87,29 @@ GRANT SELECT, INSERT ON db_test.tb_returns TO 'buyer';
 GRANT SELECT, INSERT ON db_test.tbd_return_items TO 'buyer';
 GRANT SELECT ON db_test.tb_refunds TO 'buyer';
 
-/* COMMON_USER: consulta de catálogo */
-GRANT SELECT ON db_test.tb_products TO 'common_user';
+/* COMMON_USER: consulta solo del catálogo disponible */
+CREATE OR REPLACE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW db_test.vw_catalogo_productos_disponibles AS
+SELECT
+    o.product_offer_ID,
+    p.ID AS product_ID,
+    p.SKU,
+    p.name,
+    p.description,
+    p.current_price,
+    p.current_stock,
+    o.available_stok AS offer_stock
+FROM db_test.tb_products AS p
+INNER JOIN db_test.tbd_products_users_providers AS o
+    ON o.product_ID = p.ID
+WHERE p.status = b'1'
+  AND p.current_stock > 0
+  AND o.status = b'1'
+  AND o.available_stok > 0;
+
+REVOKE SELECT ON db_test.tb_products FROM 'common_user';
+GRANT SELECT ON db_test.vw_catalogo_productos_disponibles TO 'common_user';
+GRANT SELECT ON db_test.vw_catalogo_productos_disponibles TO 'user_not_registered';
+GRANT SELECT ON db_test.vw_catalogo_productos_disponibles TO 'buyer';
 GRANT SELECT ON db_test.tbc_categories TO 'common_user';
 GRANT SELECT ON db_test.tbd_products_categories TO 'common_user';
 GRANT SELECT ON db_test.tb_payment_methods TO 'common_user';
@@ -160,3 +182,5 @@ FLUSH PRIVILEGES;
 
 SELECT 'Los users y sus roles/privilegios han sido configurados correctamente'
 AS mensaje;
+
+
