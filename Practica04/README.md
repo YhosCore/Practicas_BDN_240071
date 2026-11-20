@@ -19,6 +19,12 @@ Simular el ciclo de compra de la tienda en línea en `db_test`, usando usuarios 
 - Los cambios CRUD del flujo de compra aparecen en `tb_logs` con la cuenta de base de datos que los ejecutó.
 - El caso 5 termina con la orden y el pago cancelados, y el cupón `GIFT-C5-2026-3002-84K7` activo.
 
+## Vistas de evidencia
+
+El respaldo también crea vistas para revisar el historial CRUD ordenado cronológicamente y un resumen de cumplimiento: `vw_practica04_caso_1` a `vw_practica04_caso_5`, `vw_practica04_eventos` y `vw_practica04_resumen`. Para consultar un caso: `SELECT * FROM vw_practica04_caso_1 ORDER BY fecha_evento;`. El resumen compara artículos, unidades pedidas/canceladas/finales, categorías, proveedores, pagos, autorizaciones/rechazos, envíos, reclamaciones, reembolsos e inventario.
+
+La bitácora guarda la cuenta y el host de conexión. Para esta evidencia se simuló `app_web@192.168.1.25`; el rol activo no se persiste en `tb_logs`, por lo que la columna `rol` de la vista clasifica la etapa prevista del flujo a partir de la operación.
+
 ## Respaldo
 
-El estado acumulado de los casos 1 a 5 está en [`backups/07_11__p03.sql`](backups/07_11__p03.sql). Se conserva el nombre histórico del archivo y no se agregan archivos independientes de consultas para los casos.
+El estado acumulado de los casos 1 a 5 está en [`backups/19_11_p4.sql`](backups/19_11_p4.sql). El respaldo incluye los casos 1 a 5 y no se agregan archivos independientes de consultas para los casos.
